@@ -1,0 +1,14 @@
+.Filter_buttons{
+ display: flex;
+ flex-direction: column;
+ gap:2vh;
+
+}
+.Filter_buttons>button{
+    width: 95%;
+    padding: 2%;
+    margin: 2%;
+    background-color:orchid;
+    border-radius: 1rem;
+    border: none;
+}

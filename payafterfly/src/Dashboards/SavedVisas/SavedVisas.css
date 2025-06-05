@@ -1,0 +1,55 @@
+.saved-visas-container {
+  display: flex;
+flex-wrap: nowrap;
+  gap: 2rem;
+  padding: 2rem;
+  background: linear-gradient(to right, #e0f7fa, #f1f8e9);
+  min-height: 100vh;
+}
+
+.visa-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  position: relative;
+}
+
+.visa-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+}
+
+.visa-card h3 {
+  font-size: 1.5rem;
+  color: #00796b;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #00796b;
+  padding-bottom: 0.5rem;
+}
+
+.visa-card p {
+  font-size: 1rem;
+  color: #444;
+  margin: 0.5rem 0;
+}
+
+.visa-card p span {
+  font-weight: bold;
+  color: #00695c;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

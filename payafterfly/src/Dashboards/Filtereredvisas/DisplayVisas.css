@@ -1,0 +1,227 @@
+/* DisplayVisas.css */
+
+/* Base Styles */
+.visas-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-title {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #3498db, #2c3e50);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientShift 8s ease infinite;
+    background-size: 200% 200%;
+}
+
+/* Loading Animation */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+.loading-text {
+    color: #7f8c8d;
+    font-size: 1.2rem;
+}
+
+/* Cards Container */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Visa Card Styling */
+.visa-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+    height: 60vh;
+    width: 30vw;
+}
+
+.visa-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Header */
+.card-header {
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    color: white;
+    padding: 1.5rem;
+    position: relative;
+}
+
+.company-name {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.visa-type {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.visa-type.work {
+    background-color: #2ecc71;
+}
+
+.visa-type.study {
+    background-color: #e74c3c;
+}
+
+.visa-type.tourist {
+    background-color: #f39c12;
+}
+
+/* Card Body */
+.card-body {
+    padding: 1.5rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #7f8c8d;
+    flex: 1;
+}
+
+.info-value {
+    flex: 2;
+    /* text-align: right; */
+    color: #2c3e50;
+}
+
+.highlight {
+    background-color: #f8f9fa;
+    padding: 0.8rem;
+    border-radius: 5px;
+    margin: 0.5rem -0.8rem;
+}
+
+.salary {
+    color: #27ae60;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.country {
+    color: #3498db;
+    font-weight: bold;
+}
+
+.address {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-top: 1rem;
+}
+
+/* Card Footer */
+.card-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    text-align: right;
+}
+
+.details-button {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    /* align-items: center; */
+    transition: all 0.3s ease;
+    margin: 10px;
+}
+
+.details-button:hover {
+    background: linear-gradient(135deg, #2980b9, #3498db);
+    transform: translateX(5px);
+}
+
+.button-icon {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.details-button:hover .button-icon {
+    transform: translateX(3px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Delay animations for each card */
+.visa-card:nth-child(1) { animation-delay: 0.1s; }
+.visa-card:nth-child(2) { animation-delay: 0.2s; }
+.visa-card:nth-child(3) { animation-delay: 0.3s; }
+.visa-card:nth-child(4) { animation-delay: 0.4s; }
+.visa-card:nth-child(5) { animation-delay: 0.5s; }
+.visa-card:nth-child(6) { animation-delay: 0.6s; }
