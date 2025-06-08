@@ -36,7 +36,11 @@ const Navbarr = () => {
           
             {logedinuser ? (<>
                <Button className="w-100 mt-3" variant="primary"  onClick={handleLogout}>Logout</Button>
-               { Visagrabber && <Button className="w-100 mt-3" variant="primary" onClick={()=>navigate('/visagrabberDashboard/savedvisas')} >SavedVisas</Button>}
+               { Visagrabber && <><Button className="w-100 mt-3" variant="primary" onClick={()=>navigate('/visagrabberDashboard/savedvisas')} >SavedVisas</Button>
+                    <Button className="w-100 mt-3" variant="primary" onClick={()=>navigate('/visagrabberDashboard/appliedvisas')} >AppliedVisas</Button>
+              
+             
+              </> }
                  
             </>):(<>
                  <Link to='/signup' style={{color:'white',textDecoration:'none'}}>SignUp</Link>

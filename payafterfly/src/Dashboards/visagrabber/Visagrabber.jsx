@@ -3,6 +3,7 @@ import { Outlet, useParams } from 'react-router-dom'
 import FilteredVisa from '../Filtereredvisas/FilteredVisa'
 import DisplayVisas from '../Filtereredvisas/DisplayVisas'
 import Savedvisasa from '../SavedVisas/Savedvisasa'
+import AppliedVisas from '../AppliedJobs/AppliedVisas'
 const Visagrabber = () => {
     const [filDatajobs,setFilDatajobs]=useState("")
     //console.log(params)
@@ -12,8 +13,8 @@ function rendercomp(){
   
     if(params.savedvisas==="savedvisas"){
       return <Savedvisasa/>
-    }else if(params.appliedvisas==="appliedvisas"){
-      return <Appliedvisas/>
+    }else if(params.savedvisas==="appliedvisas"){
+      return <AppliedVisas/>
     }else{
       return <DisplayVisas filDatajobs={filDatajobs}/>
     }

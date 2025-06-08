@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../../Components/Confifdetails/Config';
 import { doc, getDoc } from 'firebase/firestore';
 import styled, { keyframes } from 'styled-components';
-import { FaBookmark, FaSpinner, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaFlag, FaBuilding, FaHeart } from 'react-icons/fa';
+import { FaFileAlt, FaSpinner, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaFlag, FaBuilding } from 'react-icons/fa';
 
 // Animations
 const fadeIn = keyframes`
@@ -23,14 +23,6 @@ const spin = keyframes`
 const pulse = keyframes`
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
-`;
-
-const heartBeat = keyframes`
-  0% { transform: scale(1); }
-  14% { transform: scale(1.3); }
-  28% { transform: scale(1); }
-  42% { transform: scale(1.3); }
-  70% { transform: scale(1); }
 `;
 
 // Styled Components
@@ -54,8 +46,7 @@ const VisaCard = styled.div`
   padding: 1.5rem;
   transition: all 0.3s ease;
   animation: ${cardEntrance} 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
-  border-left: 4px solid #ff6b6b;
-  position: relative;
+  border-left: 4px solid #4facfe;
   
   &:hover {
     transform: translateY(-5px);
@@ -63,30 +54,11 @@ const VisaCard = styled.div`
   }
 
   &:nth-child(odd) {
-    border-left-color: #4ecdc4;
+    border-left-color: #00f2fe;
   }
   
   &:nth-child(3n) {
-    border-left-color: #ffbe76;
-  }
-`;
-
-const BookmarkIcon = styled.div`
-  position: absolute;
-  top: -10px;
-  right: 15px;
-  background: #ff6b6b;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
-  
-  svg {
-    animation: ${heartBeat} 1.5s ease infinite;
+    border-left-color: #f5576c;
   }
 `;
 
@@ -98,11 +70,10 @@ const CompanyName = styled.h3`
   border-bottom: 1px solid #f0f0f0;
   display: flex;
   align-items: center;
-  padding-right: 30px;
   
   svg {
     margin-right: 10px;
-    color: #ff6b6b;
+    color: #4facfe;
   }
 `;
 
@@ -148,7 +119,7 @@ const EmptyState = styled.div`
   svg {
     width: 80px;
     height: 80px;
-    color: #ff6b6b;
+    color: #4facfe;
     margin-bottom: 1.5rem;
     opacity: 0.7;
   }
@@ -178,8 +149,8 @@ const LoadingState = styled.div`
 const Spinner = styled.div`
   width: 50px;
   height: 50px;
-  border: 4px solid rgba(255, 107, 107, 0.2);
-  border-top: 4px solid #ff6b6b;
+  border: 4px solid rgba(79, 172, 254, 0.2);
+  border-top: 4px solid #4facfe;
   border-radius: 50%;
   animation: ${spin} 1s linear infinite;
   margin-bottom: 1.5rem;
@@ -191,98 +162,95 @@ const LoadingText = styled.p`
   animation: ${pulse} 1.5s ease-in-out infinite;
 `;
 
-const Savedvisasa = () => {
+const AppliedVisas = () => {
   const Loggedinuser = JSON.parse(localStorage.getItem("Visagrabber"));
-  const [loading, setloading] = useState(true);
-  const [savedvisas, setsavedvisas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [appliedVisas, setAppliedVisas] = useState([]);
 
   useEffect(() => {
-    const fetchsavedVisas = async () => {
+    const fetchAppliedVisas = async () => {
       try {
-        const docref = doc(db, "visagrabbers", Loggedinuser.user.displayName);
-        const Maingetdocref = await getDoc(docref);
-        if (Maingetdocref.exists()) {
-          const SavedJobs = Maingetdocref.data().Savedjobs || [];
-          setsavedvisas(SavedJobs);
+        const docRef = doc(db, "visagrabbers", Loggedinuser.user.displayName);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const savedJobs = docSnap.data().appliedVisa || [];
+          setAppliedVisas(savedJobs);
         } else {
-          console.log("No saved visas found");
+          console.log("No such document!");
         }
-        setloading(false);
+        setLoading(false);
       } catch (err) {
-        console.log(err, "error in fetching");
-        setloading(false);
+        console.error("Error in fetching:", err);
+        setLoading(false);
       }
     };
-    fetchsavedVisas();
+    
+    fetchAppliedVisas();
   }, [Loggedinuser.user.displayName]);
 
   if (loading) {
     return (
       <LoadingState>
         <Spinner />
-        <LoadingText>Loading your saved visas...</LoadingText>
+        <LoadingText>Loading your applied visas...</LoadingText>
       </LoadingState>
     );
   }
 
-  if (!savedvisas || savedvisas.length === 0) {
+  if (appliedVisas.length === 0) {
     return (
       <EmptyState>
-        <FaBookmark />
-        <EmptyTitle>No Visas Saved Yet</EmptyTitle>
-        <EmptyText>When you save visas, they will appear here for quick access.</EmptyText>
+        <FaFileAlt />
+        <EmptyTitle>No Visas Applied Yet</EmptyTitle>
+        <EmptyText>When you apply for visas, they will appear here.</EmptyText>
       </EmptyState>
     );
   }
 
   return (
     <Container>
-      <h1>Your Saved Visas</h1>
+      <h1>Your Applied Visas</h1>
       <VisaGrid>
-        {savedvisas.map((savedjob, index) => (
+        {appliedVisas.map((appliedJob, index) => (
           <VisaCard key={index} style={{ animationDelay: `${index * 0.1}s` }}>
-            <BookmarkIcon>
-              <FaHeart />
-            </BookmarkIcon>
             <CompanyName>
-              <FaBuilding /> {savedjob.companyname}
+              <FaBuilding /> {appliedJob.companyname}
             </CompanyName>
             
             <DetailItem>
               <DetailLabel><FaFlag /> Visa Type:</DetailLabel>
-              <DetailValue>{savedjob.visatype}</DetailValue>
+              <DetailValue>{appliedJob.visatype}</DetailValue>
             </DetailItem>
             
-            {savedjob.name && (
-              <DetailItem>
-                <DetailLabel>Name:</DetailLabel>
-                <DetailValue>{savedjob.name}</DetailValue>
-              </DetailItem>
-            )}
+            <DetailItem>
+              <DetailLabel>Name:</DetailLabel>
+              <DetailValue>{appliedJob.name}</DetailValue>
+            </DetailItem>
             
             <DetailItem>
               <DetailLabel><FaMapMarkerAlt /> Country:</DetailLabel>
-              <DetailValue>{savedjob.country}</DetailValue>
+              <DetailValue>{appliedJob.country}</DetailValue>
             </DetailItem>
             
             <DetailItem>
               <DetailLabel><FaBriefcase /> Work Type:</DetailLabel>
-              <DetailValue>{savedjob.work}</DetailValue>
+              <DetailValue>{appliedJob.work}</DetailValue>
             </DetailItem>
             
             <DetailItem>
               <DetailLabel><FaGraduationCap /> Qualification:</DetailLabel>
-              <DetailValue>{savedjob.qualification}</DetailValue>
+              <DetailValue>{appliedJob.qualification}</DetailValue>
             </DetailItem>
             
             <DetailItem>
               <DetailLabel><FaMapMarkerAlt /> Address:</DetailLabel>
-              <DetailValue>{savedjob.addressofcompany}</DetailValue>
+              <DetailValue>{appliedJob.addressofcompany}</DetailValue>
             </DetailItem>
             
             <DetailItem>
               <DetailLabel><FaMoneyBillWave /> Salary:</DetailLabel>
-              <SalaryValue>₹{savedjob.salary} / month</SalaryValue>
+              <SalaryValue>₹{appliedJob.salary} / month</SalaryValue>
             </DetailItem>
           </VisaCard>
         ))}
@@ -291,4 +259,4 @@ const Savedvisasa = () => {
   );
 };
 
-export default Savedvisasa;
+export default AppliedVisas;
