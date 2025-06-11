@@ -9,6 +9,7 @@ import Postvisa from "./Dashboards/Postvisa/Postvisa";
 import Mypostings from "./Dashboards/mypostedvisa/Mypostings";
 import Savedvisasa from "./Dashboards/SavedVisas/Savedvisasa";
 import DisplayVisas from "./Dashboards/Filtereredvisas/DisplayVisas";
+import LandingPage from "./Dashboards/LandingPage/Landingpage";
 const App = () => {
   const [params, setparams] = useState("");
   //console.log(params)
@@ -16,6 +17,7 @@ const App = () => {
     <div>
       <Navbarr />
       <Routes>
+         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/visaproviderDashboard" element={<VisaProvider />}>

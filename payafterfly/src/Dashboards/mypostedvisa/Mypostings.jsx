@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../Components/Confifdetails/Config';
 import styled, { keyframes } from 'styled-components';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button,Form,Row,Col } from 'react-bootstrap';
 import { FaBuilding, FaGlobe, FaMoneyBillWave, FaGraduationCap, FaBriefcase, FaEnvelope, FaPhone, FaMapMarkerAlt, FaTrash, FaEdit, FaUsers, FaSpinner, FaFileAlt } from 'react-icons/fa';
-
+import { TiTick } from "react-icons/ti";
+import { TiTimes } from "react-icons/ti";
 // Animations
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -284,24 +285,58 @@ const StyledModal = styled(Modal)`
   }
 `;
 
+const TableContainer = styled.div`
+  width: 100%;
+  overflow-x: auto;
+`;
+
 const ApplicationsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.9rem;
   
   th, td {
-    padding: 0.8rem;
+    padding: 0.8rem 1rem;
     text-align: left;
     border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
   }
   
   th {
     background-color: #f8f9fa;
     font-weight: 600;
     color: #555;
+    white-space: nowrap;
+  }
+  
+  td {
+    color: #333;
   }
   
   tr:hover {
     background-color: rgba(102, 126, 234, 0.05);
+  }
+  
+  /* Fixed column widths */
+  th:nth-child(1), td:nth-child(1) {
+    width: 60px;
+    text-align: center;
+  }
+  
+  th:nth-child(2), td:nth-child(2) {
+    width: 180px;
+  }
+  
+  th:nth-child(3), td:nth-child(3) {
+    width: 200px;
+  }
+  
+  th:nth-child(4), td:nth-child(4) {
+    width: 120px;
+  }
+  
+  th:nth-child(5), td:nth-child(5) {
+    width: 150px;
   }
 `;
 
@@ -311,7 +346,10 @@ const Mypostings = () => {
   const [visa, setvisa] = useState([]);
   const [openmodal, setopenmodal] = useState(false);
   const [Applications, setApplications] = useState([]);
-
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
+   const [editFormData, setEditFormData] = useState({});
+  //console.log(editFormData)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -348,7 +386,70 @@ const Mypostings = () => {
   const handleclose = () => {
     setopenmodal(false);
   }
+const handleEditData=async(ChoosedEditedData)=>{
 
+  setEditFormData(visa[ChoosedEditedData])
+   setEditIndex(ChoosedEditedData)
+   setEditModalOpen(true)
+// console.log(ChoosedEditedData)
+
+
+
+}
+const handleUpdatedData=async()=>{
+  const UpdatedVisaDetails=[...visa]
+  UpdatedVisaDetails[editIndex] = editFormData;
+      const docRef = doc(db, "visaproviders", Logindata.user.displayName);
+      await updateDoc(docRef, { VisaDetails: UpdatedVisaDetails });
+      setvisa(UpdatedVisaDetails);
+      setEditModalOpen(false);
+
+}
+const handleClose=()=>{
+  setEditModalOpen(false)
+}
+const handleAccept=async(choosedApplication)=>{
+  const email=choosedApplication.email
+  const contact=choosedApplication.contact
+  const name=choosedApplication.name
+  console.log(email)
+  console.log(contact)
+    const docdatas = await doc(db, "visaproviders", Logindata.user.displayName);
+        const getdocRefs = await getDoc(docdatas);
+        console.log(getdocRefs.data())
+        const providerEmail=(getdocRefs.data().email)
+        const ProviderContact=getdocRefs.data().VisaDetails.map((val)=>{
+          console.log(val.contact)
+        })
+        console.log(ProviderContact)
+        
+
+  const subject="Your Visa Application Status"
+  const message=`Dear ${name},\n\nWe're pleased to inform you that your visa application has been accepted! For more Details please Contact ${providerEmail},${ProviderContact}!!!`;
+  console.log(subject)
+  console.log(message)
+ window.open(`mailto:${email}?subject=${subject}&body=${message}`); 
+  alert(`Acceptance email sent to ${name} at ${email}`);
+}
+const handleReject=async(rejectedapplication,choosedindex)=>{
+  alert("are you sure you want to delete the application")
+  console.log(rejectedapplication,choosedindex)
+  const UpdatedApplications=[...Applications]
+  console.log(UpdatedApplications)
+  const FilteredApllications=UpdatedApplications.filter((val,index)=>{
+    index !==choosedindex
+  })
+  console.log(FilteredApllications)
+const docdatass = await doc(db,"visaproviders",Logindata.user.displayName);
+       // const getdocRefs = await getDoc(docdatass);
+  // let VisaUpdatedapplications=(getdocRefs.data().VisaDetails.applications)
+     //  console.log(VisaUpdatedapplications)
+    await  updateDoc(docdatass,{
+        "VisaDetails.applications":FilteredApllications
+        })
+  setApplications(FilteredApllications)
+  alert("the application rejected successfully")
+}
   if (loading) {
     return (
       <LoadingContainer>
@@ -420,7 +521,7 @@ const Mypostings = () => {
               </CardBody>
               
               <CardActions>
-                <EditButton>
+                <EditButton  onClick={() =>handleEditData(index)}>
                   <FaEdit /> Edit
                 </EditButton>
                 <ApplicationsButton onClick={() => handdleApplications(val)}>
@@ -442,34 +543,40 @@ const Mypostings = () => {
         </NoVisas>
       )}
 
-      <StyledModal show={openmodal} onHide={handleclose}>
+      <StyledModal show={openmodal} onHide={handleclose} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Applications for {Applications.name || 'Visa'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {Applications.length > 0 ? (
-            <ApplicationsTable>
-              <thead>
-                <tr>
-                  <th>S.No</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Contact</th>
-                  <th>Aadhar No</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Applications.map((application, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{application.name}</td>
-                    <td>{application.email}</td>
-                    <td>{application.contact}</td>
-                    <td>{application.cardnumber}</td>
+            <TableContainer>
+              <ApplicationsTable>
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    <th>Aadhar No</th>
+                    <th>Accept</th>
+                    <th>Reject</th>
                   </tr>
-                ))}
-              </tbody>
-            </ApplicationsTable>
+                </thead>
+                <tbody>
+                  {Applications.map((application, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{application.name}</td>
+                      <td>{application.email}</td>
+                      <td>{application.contact}</td>
+                      <td>{application.cardnumber}</td>
+                      <td><TiTick  style={{fontSize:'1.5rem'}}  onClick={() => handleAccept(application)}/></td>
+                      <td><TiTimes style={{fontSize:'1.5rem'}} onClick={() => handleReject(application,index)} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </ApplicationsTable>
+            </TableContainer>
           ) : (
             <NoVisas>
               <FaUsers style={{ fontSize: '3rem', color: '#667eea', opacity: '0.5', marginBottom: '1rem' }} />
@@ -484,7 +591,77 @@ const Mypostings = () => {
           </Button>
         </Modal.Footer>
       </StyledModal>
+      {
+        editModalOpen && 
+      <Modal show={editModalOpen} onHide={handleClose}size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>VISA DETAILS</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control type="text" placeholder="Enter your name" onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" placeholder="Enter your email" onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Company Name</Form.Label>
+                  <Form.Control type="text" placeholder="Enter company name" onChange={(e) => setEditFormData({ ...editFormData, companyname: e.target.value })} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Country</Form.Label>
+                  <Form.Control type="text" placeholder="Enter country name" onChange={(e) => setEditFormData({ ...editFormData, country: e.target.value })} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Address of Company</Form.Label>
+                  <Form.Control type="text" placeholder="Enter company address" onChange={(e) => setEditFormData({ ...editFormData, addressofcompany: e.target.value })} required />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Work Type</Form.Label>
+                  <Form.Control type="text" placeholder="e.g., Plumber, Chef" onChange={(e) => setEditFormData({ ...editFormData, work: e.target.value })} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Contact No</Form.Label>
+                  <Form.Control type="tel" placeholder="Enter contact number" onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Salary per Month</Form.Label>
+                  <Form.Control type="number" placeholder="Enter salary" onChange={(e) => setEditFormData({ ...editFormData, salary: e.target.value })} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Visa Type</Form.Label>
+                  <Form.Select onChange={(e) => setEditFormData({ ...editFormData, visatype: e.target.value })} required>
+                    <option>Choose visa type</option>
+                    <option value="visitvisa">Visit Visa</option>
+                    <option value="workvisa">Work Visa</option>
+                    <option value="other">Other</option>
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Qualification Required</Form.Label>
+                  <Form.Control type="text" placeholder="Enter qualification" onChange={(e) => setEditFormData({ ...editFormData, qualification: e.target.value })} required />
+                </Form.Group>
+              </Col>
+            </Row>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleUpdatedData} >
+            Update VisaDetails
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      }
     </Container>
+    
   );
 }
 

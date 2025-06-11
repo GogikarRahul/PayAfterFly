@@ -1,14 +1,47 @@
-.Filter_buttons{
- display: flex;
- flex-direction: column;
- gap:2vh;
-
+.Filter_buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  flex-wrap: wrap;
+  background: linear-gradient(145deg, #f0f0f0, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
-.Filter_buttons>button{
-    width: 95%;
-    padding: 2%;
-    margin: 2%;
-    background-color:orchid;
-    border-radius: 1rem;
-    border: none;
+
+.Filter_buttons button {
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.Filter_buttons button:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.6);
+}
+
+.Filter_buttons button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: skewX(-25deg);
+  transition: left 0.4s ease;
+}
+
+.Filter_buttons button:hover::after {
+  left: 125%;
 }

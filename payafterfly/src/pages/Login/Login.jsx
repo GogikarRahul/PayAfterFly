@@ -53,7 +53,7 @@ const Login = () => {
         </Form.Group>
 
         <Button className="w-100 mt-3" variant="primary" type='submit'>Login</Button>
-        <Link to='/signup'>GO TO SIGNUP</Link>
+        <Link to='/signup'> <Button className="w-100 mt-3" variant="primary" type='submit'>Signup</Button></Link>
       </Form>
     </div>
   )
